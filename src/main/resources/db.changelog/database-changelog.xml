@@ -1,0 +1,95 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+
+    <changeSet id="1" author="Zubayr">
+        <preConditions onFail="MARK_RAN" onError="CONTINUE">
+            <not>
+                <tableExists tableName="plan"/>
+            </not>
+        </preConditions>
+        <createTable tableName="plan">
+            <column name="id" type="uuid" >
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="start_date" type="DATE"/>
+            <column name="end_date" type="DATE"/>
+            <column name="real_end_date" type="DATE"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="Zubayr">
+        <preConditions onFail="MARK_RAN" onError="CONTINUE">
+            <not>
+                <tableExists tableName="employee"/>
+            </not>
+        </preConditions>
+        <createTable tableName="employee">
+            <column name="id" type="uuid">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR"/>
+            <column name="surname" type="VARCHAR"/>
+            <column name="date_of_birth" type="date"/>
+            <column name="profession" type="INTEGER"/> <!--ENUM-->
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="Zubayr">
+        <preConditions onFail="MARK_RAN" onError="CONTINUE">
+            <not>
+                <tableExists tableName="detail"/>
+            </not>
+        </preConditions>
+        <createTable tableName="detail">
+            <column name="id" type="uuid">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR"/>
+            <column name="cipher" type="VARCHAR"/>
+            <column name="route" type="VARCHAR"/>
+            <column name="material" type="VARCHAR"/>
+            <column name="product_id" type="uuid"/>
+            <column name="stage" type="INTEGER"/> <!--ENUM-->
+        </createTable>
+    </changeSet>
+
+    <changeSet id="4" author="Zubayr">
+        <preConditions onFail="MARK_RAN" onError="CONTINUE">
+            <not>
+                <tableExists tableName="product"/>
+            </not>
+        </preConditions>
+        <createTable tableName="product">
+            <column name="id" type="uuid">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR"/>
+            <column name="cipher" type="VARCHAR"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="5" author="Zubayr">
+        <preConditions onFail="MARK_RAN" onError="CONTINUE">
+            <not>
+                <tableExists tableName="operation"/>
+            </not>
+        </preConditions>
+        <createTable tableName="operation">
+            <column name="id" type="uuid">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="name" type="INTEGER"/> <!--ENUM-->
+            <column name="serial_number" type="INT"/>
+            <column name="serial_number_by_operation" type="INT"/>
+            <column name="detail_id" type="uuid"/>
+            <column name="time_in_hours" type="NUMERIC(19,6)"/>
+            <column name="employee_id" type="uuid"/>
+            <column name="stage" type="INTEGER"/> <!--ENUM-->
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
