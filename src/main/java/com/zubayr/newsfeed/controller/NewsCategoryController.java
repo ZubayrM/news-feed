@@ -5,6 +5,8 @@ import com.zubayr.newsfeed.service.NewsCategoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/news-category")
 public class NewsCategoryController {
@@ -26,7 +28,7 @@ public class NewsCategoryController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity delete(@PathVariable Long id){
+    public ResponseEntity delete(@PathVariable UUID id){
         return newsCategoryService.delete(id);
     }
 

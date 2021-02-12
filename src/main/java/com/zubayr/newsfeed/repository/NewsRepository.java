@@ -4,8 +4,10 @@ import com.zubayr.newsfeed.model.News;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.UUID;
+
 @Repository
-public interface NewsRepository extends PagingAndSortingRepository<News, Long> {
+public interface NewsRepository extends PagingAndSortingRepository<News, UUID> {
 
 
     Iterable<News> findAllByName(String value);

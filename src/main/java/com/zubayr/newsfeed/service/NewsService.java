@@ -4,6 +4,8 @@ import com.zubayr.newsfeed.dto.NewsDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public interface NewsService {
 
@@ -15,5 +17,5 @@ public interface NewsService {
 
     ResponseEntity update(NewsDto dto);
 
-    ResponseEntity delete(Long id);
+    ResponseEntity delete(UUID id);
 }

@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class NewsServiceImpl implements NewsService {
 
@@ -81,7 +82,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public ResponseEntity delete(Long id) {
+    public ResponseEntity delete(UUID id) {
         if (newsRepository.findById(id).isPresent()){
             newsRepository.deleteById(id);
             return ResponseEntity.ok(true);

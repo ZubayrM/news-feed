@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class NewsCategoryServiceImpl implements NewsCategoryService {
 
@@ -39,7 +40,7 @@ public class NewsCategoryServiceImpl implements NewsCategoryService {
     }
 
     @Override
-    public ResponseEntity delete(Long id) {
+    public ResponseEntity delete(UUID id) {
         if (newsCategoryRepository.findById(id).isPresent()) {
             newsCategoryRepository.deleteById(id);
             return ResponseEntity.ok(true);

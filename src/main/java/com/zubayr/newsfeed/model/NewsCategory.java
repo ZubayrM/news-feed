@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "news_category")
@@ -17,14 +19,14 @@ import java.util.ArrayList;
 public class NewsCategory {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
     @Column(name = "id")
-    private Long id;
+    private UUID id;
 
     @Column(name = "name")
     private String name;
 
     @OneToMany(mappedBy = "news_category", fetch = FetchType.LAZY)
-    private ArrayList<News> newsList = new ArrayList<>();
+    private List<News> newsList = new ArrayList<>();
 
 }
