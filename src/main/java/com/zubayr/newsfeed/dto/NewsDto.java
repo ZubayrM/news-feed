@@ -19,6 +19,8 @@ public class NewsDto {
 
     private String text;
 
-    //private String date;
+    private String date;
+
+    private NewsCategoryDto category;
 
 }

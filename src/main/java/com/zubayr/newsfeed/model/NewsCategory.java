@@ -26,7 +26,7 @@ public class NewsCategory {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "news_category", fetch = FetchType.LAZY)
-    private List<News> newsList = new ArrayList<>();
+    @OneToMany(mappedBy = "newsCategory", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<News> news = new ArrayList<>();
 
 }

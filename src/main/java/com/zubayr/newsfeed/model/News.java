@@ -32,7 +32,7 @@ public class News {
     private LocalDate date;
 
     @ManyToOne
-    @JoinColumn(name = "news_category")
+    @JoinColumn(name = "newsCategory_id")
     private NewsCategory newsCategory;
 
 }

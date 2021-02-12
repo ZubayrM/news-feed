@@ -30,7 +30,7 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>8.0.19</version>
+			<version>8.0.20</version>
 		</dependency>
 
 		<dependency>
@@ -53,7 +53,7 @@
 		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
-			<version>4.2.2</version>
+			<version>4.3.0</version>
 		</dependency>
 	</dependencies>
 
