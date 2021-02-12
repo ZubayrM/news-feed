@@ -23,22 +23,22 @@ public class NewsController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity search(String type, String value){
+    public ResponseEntity search(@RequestParam String type,@RequestParam String value){
         return newsService.search(type, value);
     }
 
     @PostMapping
-    public ResponseEntity add(NewsDto dto){
+    public ResponseEntity add(@RequestBody NewsDto dto){
         return newsService.add(dto);
     }
 
     @PutMapping
-    public ResponseEntity update(NewsDto dto){
+    public ResponseEntity update(@RequestBody NewsDto dto){
         return newsService.update(dto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity delete(@PathVariable UUID id){
+    public ResponseEntity deleteById(@PathVariable UUID id){
         return newsService.delete(id);
     }
 }

@@ -1,5 +1,6 @@
 package com.zubayr.newsfeed.service.impl;
 
+import com.zubayr.newsfeed.converter.NewsCategoryConverter;
 import com.zubayr.newsfeed.converter.NewsConverter;
 import com.zubayr.newsfeed.dto.NewsDto;
 import com.zubayr.newsfeed.model.News;
@@ -12,17 +13,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Service
 public class NewsServiceImpl implements NewsService {
 
     private NewsRepository newsRepository;
     private NewsConverter newsConverter;
     private NewsCategoryRepository newsCategoryRepository;
+    private NewsCategoryConverter newsCategoryConverter;
 
 
 
@@ -31,12 +39,15 @@ public class NewsServiceImpl implements NewsService {
         this.newsRepository = newsRepository;
         this.newsCategoryRepository = newsCategoryRepository;
         newsConverter = Mappers.getMapper(NewsConverter.class);
+        newsCategoryConverter = Mappers.getMapper(NewsCategoryConverter.class);
     }
 
     @Override
     public ResponseEntity getAll() {
         Iterable<News> date = newsRepository.findAll(Sort.by(Sort.Direction.DESC, "date"));
-        return ResponseEntity.ok(convertToDtlList(date));
+        if (date.iterator().hasNext()) {
+            return ResponseEntity.ok(convertToDtlList(date));
+        } else return ResponseEntity.ok(new ArrayList<>());
     }
 
     @Override
@@ -45,15 +56,21 @@ public class NewsServiceImpl implements NewsService {
         switch (type){
             case "category": {
                 NewsCategory category = newsCategoryRepository.findByName(value);
-                return ResponseEntity.ok(convertToDtlList(category.getNewsList()));
+                if (category != null) {
+                    return ResponseEntity.ok(convertToDtlList(category.getNews()));
+                } else ResponseEntity.ok(new ArrayList<>());
             }
             case "name": {
                 Iterable<News> allByName = newsRepository.findAllByName(value);
-                return ResponseEntity.ok(convertToDtlList(allByName));
+                if (allByName.iterator().hasNext()) {
+                    return ResponseEntity.ok(convertToDtlList(allByName));
+                } else return ResponseEntity.ok(new ArrayList<>());
             }
             case "text": {
                 Iterable<News> allByTextLike = newsRepository.findAllByTextLike(value);
-                return ResponseEntity.ok(convertToDtlList(allByTextLike));
+                if (allByTextLike.iterator().hasNext()) {
+                    return ResponseEntity.ok(convertToDtlList(allByTextLike));
+                } else return ResponseEntity.ok(new ArrayList<>());
 
             }
             default:{
@@ -65,6 +82,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public ResponseEntity add(NewsDto dto) {
+        newsCategoryRepository.save(newsCategoryConverter.convertToModel(dto.getCategory()));
         News save = newsRepository.save(newsConverter.convertToModel(dto));
         return ResponseEntity.ok(newsConverter.convertToDto(save));
     }

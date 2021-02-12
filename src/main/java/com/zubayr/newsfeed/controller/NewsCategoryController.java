@@ -28,7 +28,7 @@ public class NewsCategoryController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity delete(@PathVariable UUID id){
+    public ResponseEntity deleteById(@PathVariable UUID id){
         return newsCategoryService.delete(id);
     }
 

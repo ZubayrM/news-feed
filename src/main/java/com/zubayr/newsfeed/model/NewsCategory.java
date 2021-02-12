@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -19,14 +20,15 @@ import java.util.UUID;
 public class NewsCategory {
 
     @Id
-    @GeneratedValue(generator = "uuid")
+    @GeneratedValue(generator = "uuid4")
+    @GenericGenerator(name = "uuid4", strategy = "uuid4")
     @Column(name = "id")
     private UUID id;
 
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "news_category", fetch = FetchType.LAZY)
-    private List<News> newsList = new ArrayList<>();
+    @OneToMany(mappedBy = "newsCategory", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<News> news = new ArrayList<>();
 
 }
