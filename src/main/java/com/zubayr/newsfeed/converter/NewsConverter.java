@@ -20,7 +20,7 @@ public interface NewsConverter {
 
     @Mappings({
             @Mapping(target = "date", dateFormat = "dd-MM-yyyy"),
-            @Mapping(source = "category", target = "category", qualifiedByName = "toNewsCategory")
+            @Mapping(source = "category", target = "newsCategory", qualifiedByName = "getNewsCategory")
     })
     News convertToModel(NewsDto dto);
 
@@ -28,5 +28,10 @@ public interface NewsConverter {
     @Named("getName")
     static String getName(NewsCategory category){
         return category.getName();
+    }
+
+    @Named("getNewsCategory")
+    static NewsCategory getNewsCategory(String name){
+        return NewsCategory.builder().name(name).build();
     }
 }

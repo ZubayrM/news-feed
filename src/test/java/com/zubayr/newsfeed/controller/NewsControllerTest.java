@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -67,7 +68,7 @@ class NewsControllerTest {
         NewsDto dto = NewsDto.builder()
                 .name("test name")
                 .text("test text")
-                .date(LocalDate.now().toString()).
+                .date(LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))).
                 category("test category").build();
 
 

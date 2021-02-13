@@ -12,7 +12,7 @@
             </not>
         </preConditions>
         <createTable tableName="news">
-            <column name="id" type="uuid(191)" >
+            <column name="id" type="uuid(36)" >
                 <constraints nullable="false" unique="true" primaryKey="true"/>
             </column>
             <column name="name" type="VARCHAR(256)"/>
@@ -29,7 +29,7 @@
             </not>
         </preConditions>
         <createTable tableName="news_category">
-            <column name="id" type="uuid(191)">
+            <column name="id" type="uuid(36)">
                 <constraints nullable="false" unique="true" primaryKey="true"/>
             </column>
             <column name="name" type="VARCHAR(256)"/>
