@@ -17,5 +17,5 @@ public interface NewsService {
 
     ResponseEntity update(NewsDto dto);
 
-    ResponseEntity delete(UUID id);
+    ResponseEntity delete(String id);
 }

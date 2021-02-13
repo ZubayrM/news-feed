@@ -20,15 +20,19 @@ import java.util.UUID;
 public class NewsCategory {
 
     @Id
-    @GeneratedValue(generator = "hibernate-uuid")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "id")
-    private UUID id;
+    private String id;
+
 
     @Column(name = "name")
     private String name;
 
     @OneToMany(mappedBy = "newsCategory", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<News> news = new ArrayList<>();
+
+    @PrePersist
+    public void prePersist(){
+        if(null == getId())
+            setId(UUID.randomUUID().toString());
+    }
 
 }

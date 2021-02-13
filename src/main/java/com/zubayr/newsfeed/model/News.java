@@ -19,10 +19,7 @@ import java.util.UUID;
 public class News {
 
     @Id
-    @GeneratedValue(generator = "hibernate-uuid")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "id")
-    private UUID id;
+    private String id;
 
     @Column(name = "name")
     private String name;
@@ -36,5 +33,12 @@ public class News {
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private NewsCategory newsCategory;
+
+    @PrePersist
+    public void prePersist(){
+        if(null == getId())
+            setId(UUID.randomUUID().toString());
+    }
+
 
 }

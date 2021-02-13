@@ -13,6 +13,6 @@ public interface NewsCategoryService {
 
     ResponseEntity add(NewsCategoryDto dto);
 
-    ResponseEntity delete(UUID id);
+    ResponseEntity delete(String id);
 
 }

@@ -19,10 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class NewsServiceImpl implements NewsService {
@@ -55,7 +52,7 @@ public class NewsServiceImpl implements NewsService {
 
         switch (type){
             case "category": {
-                NewsCategory category = newsCategoryRepository.findByName(value);
+                NewsCategory category = newsCategoryRepository.findByName(value).get();
                 if (category != null) {
                     return ResponseEntity.ok(convertToDtlList(category.getNews()));
                 } else ResponseEntity.ok(new ArrayList<>());
@@ -82,9 +79,20 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public ResponseEntity add(NewsDto dto) {
-        newsCategoryRepository.save(newsConverter.convertToModel(dto).getNewsCategory());
-        News save = newsRepository.save(newsConverter.convertToModel(dto));
-        return ResponseEntity.ok(newsConverter.convertToDto(save));
+        News news = newsConverter.convertToModel(dto);
+        NewsCategory newsCategory = news.getNewsCategory();
+
+        Optional<NewsCategory> category = newsCategoryRepository.findByName(newsCategory.getName());
+
+        if (category.isPresent()){
+            news.setNewsCategory(category.get());
+        } else {
+            NewsCategory newSaveCategory = newsCategoryRepository.save(newsCategory);
+            news.setNewsCategory(newSaveCategory);
+        }
+        News newNews = newsRepository.save(news);
+
+        return ResponseEntity.ok(newsConverter.convertToDto(newNews));
     }
 
     @Override
@@ -100,7 +108,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public ResponseEntity delete(UUID id) {
+    public ResponseEntity delete(String id) {
         if (newsRepository.findById(id).isPresent()){
             newsRepository.deleteById(id);
             return ResponseEntity.ok(true);

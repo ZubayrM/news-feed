@@ -41,7 +41,7 @@ class NewsControllerTest {
     @Autowired
     private NewsRepository newsRepository;
 
-    static UUID testId = UUID.randomUUID();
+    static String testId = UUID.randomUUID().toString();
 
     @Test
     @SneakyThrows
@@ -66,6 +66,7 @@ class NewsControllerTest {
     void add() {
 
         NewsDto dto = NewsDto.builder()
+                .id(testId)
                 .name("test name")
                 .text("test text")
                 .date(LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))).

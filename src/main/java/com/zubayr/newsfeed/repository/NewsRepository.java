@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface NewsRepository extends PagingAndSortingRepository<News, UUID> {
+public interface NewsRepository extends PagingAndSortingRepository<News, String> {
 
 
     Iterable<News> findAllByName(String value);

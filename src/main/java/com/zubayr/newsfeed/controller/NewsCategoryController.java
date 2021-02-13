@@ -13,7 +13,7 @@ public class NewsCategoryController {
 
     private NewsCategoryService newsCategoryService;
 
-    public NewsCategoryController(NewsCategoryService newsCategoryService) {
+    public NewsCategoryController(@RequestBody NewsCategoryService newsCategoryService) {
         this.newsCategoryService = newsCategoryService;
     }
 
@@ -23,12 +23,12 @@ public class NewsCategoryController {
     }
 
     @PostMapping
-    public ResponseEntity add(NewsCategoryDto dto){
+    public ResponseEntity add(@RequestBody NewsCategoryDto dto){
         return newsCategoryService.add(dto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteById(@PathVariable UUID id){
+    public ResponseEntity deleteById(@PathVariable String id){
         return newsCategoryService.delete(id);
     }
 

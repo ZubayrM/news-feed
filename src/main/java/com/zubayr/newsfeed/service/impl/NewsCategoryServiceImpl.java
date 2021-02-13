@@ -43,7 +43,7 @@ public class NewsCategoryServiceImpl implements NewsCategoryService {
     }
 
     @Override
-    public ResponseEntity delete(UUID id) {
+    public ResponseEntity delete(String id) {
         if (newsCategoryRepository.findById(id).isPresent()) {
             newsCategoryRepository.deleteById(id);
             return ResponseEntity.ok(true);

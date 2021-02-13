@@ -13,7 +13,7 @@ import java.util.UUID;
 @Builder
 public class NewsDto {
 
-    private UUID id;
+    private String id;
 
     private String name;
 
