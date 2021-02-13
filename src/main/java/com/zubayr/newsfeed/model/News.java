@@ -1,10 +1,7 @@
 package com.zubayr.newsfeed.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -13,16 +10,15 @@ import java.util.UUID;
 @Entity
 @Table(name = "news")
 @Data
+@ToString
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class News {
 
     @Id
-    @GeneratedValue(generator = "hibernate-uuid")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "id")
-    private UUID id;
+    private String id;
 
     @Column(name = "name")
     private String name;
@@ -35,6 +31,14 @@ public class News {
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
+    @JsonManagedReference
     private NewsCategory newsCategory;
+
+    @PrePersist
+    public void prePersist(){
+        if(null == getId())
+            setId(UUID.randomUUID().toString());
+    }
+
 
 }

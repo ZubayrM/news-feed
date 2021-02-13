@@ -1,18 +1,17 @@
 package com.zubayr.newsfeed.service;
 
 import com.zubayr.newsfeed.dto.NewsCategoryDto;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+import java.util.List;
 
 @Service
 public interface NewsCategoryService {
 
-    ResponseEntity getAll();
+    List<NewsCategoryDto> getAll();
 
-    ResponseEntity add(NewsCategoryDto dto);
+    NewsCategoryDto add(NewsCategoryDto dto);
 
-    ResponseEntity delete(UUID id);
+    void delete(String id);
 
 }

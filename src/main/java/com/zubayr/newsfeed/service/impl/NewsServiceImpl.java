@@ -11,27 +11,19 @@ import com.zubayr.newsfeed.service.NewsService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class NewsServiceImpl implements NewsService {
 
-    private NewsRepository newsRepository;
-    private NewsConverter newsConverter;
-    private NewsCategoryRepository newsCategoryRepository;
-    private NewsCategoryConverter newsCategoryConverter;
-
+    private final NewsRepository newsRepository;
+    private final NewsConverter newsConverter;
+    private final NewsCategoryRepository newsCategoryRepository;
+    private final NewsCategoryConverter newsCategoryConverter;
 
 
     @Autowired
@@ -43,73 +35,78 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public ResponseEntity getAll() {
+    public List<NewsDto> getAll() {
         Iterable<News> date = newsRepository.findAll(Sort.by(Sort.Direction.DESC, "date"));
         if (date.iterator().hasNext()) {
-            return ResponseEntity.ok(convertToDtlList(date));
-        } else return ResponseEntity.ok(new ArrayList<>());
+            return convertToDtoList(date);
+        } else return new ArrayList<>();
     }
 
     @Override
-    public ResponseEntity search(String type, String value) {
+    public List<NewsDto> search(String type, String value) {
 
-        switch (type){
+        switch (type) {
             case "category": {
-                NewsCategory category = newsCategoryRepository.findByName(value);
-                if (category != null) {
-                    return ResponseEntity.ok(convertToDtlList(category.getNews()));
-                } else ResponseEntity.ok(new ArrayList<>());
+                Optional<NewsCategory> category = newsCategoryRepository.findByName(value);
+                return category.map(newsCategory -> convertToDtoList(newsCategory.getNews())).orElseGet(ArrayList::new);
             }
             case "name": {
                 Iterable<News> allByName = newsRepository.findAllByName(value);
                 if (allByName.iterator().hasNext()) {
-                    return ResponseEntity.ok(convertToDtlList(allByName));
-                } else return ResponseEntity.ok(new ArrayList<>());
+                    return convertToDtoList(allByName);
+                } else return new ArrayList<>();
             }
             case "text": {
                 Iterable<News> allByTextLike = newsRepository.findAllByTextLike(value);
                 if (allByTextLike.iterator().hasNext()) {
-                    return ResponseEntity.ok(convertToDtlList(allByTextLike));
-                } else return ResponseEntity.ok(new ArrayList<>());
-
+                    return convertToDtoList(allByTextLike);
+                } else return new ArrayList<>();
             }
-            default:{
-                return ResponseEntity.ok(newsRepository.findAll(Sort.by(Sort.Direction.DESC, "date")));
+            default: {
+                return  convertToDtoList(newsRepository.findAll(Sort.by(Sort.Direction.DESC, "date")));
             }
         }
     }
 
 
     @Override
-    public ResponseEntity add(NewsDto dto) {
-        newsCategoryRepository.save(newsConverter.convertToModel(dto).getNewsCategory());
-        News save = newsRepository.save(newsConverter.convertToModel(dto));
-        return ResponseEntity.ok(newsConverter.convertToDto(save));
+    public NewsDto add(NewsDto dto) {
+        News news = newsConverter.convertToModel(dto);
+        NewsCategory newsCategory = news.getNewsCategory();
+
+        Optional<NewsCategory> category = newsCategoryRepository.findByName(newsCategory.getName());
+
+        if (category.isPresent()) {
+            news.setNewsCategory(category.get());
+        } else {
+            NewsCategory newSaveCategory = newsCategoryRepository.save(newsCategory);
+            news.setNewsCategory(newSaveCategory);
+        }
+        News newNews = newsRepository.save(news);
+
+        return newsConverter.convertToDto(newNews);
     }
 
     @Override
-    public ResponseEntity update(NewsDto dto) {
+    public NewsDto update(NewsDto dto) {
         Optional<News> news = newsRepository.findById(dto.getId());
-        news.ifPresent(o-> {
+        news.ifPresent(o -> {
             o.setName(dto.getName());
             o.setText(dto.getText());
             newsRepository.save(o);
         });
 
-        return ResponseEntity.ok(newsConverter.convertToDto(news.orElse(new News())));
+        return newsConverter.convertToDto(news.orElse(new News()));
     }
 
     @Override
-    public ResponseEntity delete(UUID id) {
-        if (newsRepository.findById(id).isPresent()){
-            newsRepository.deleteById(id);
-            return ResponseEntity.ok(true);
-        } else return ResponseEntity.ok(HttpStatus.NOT_FOUND);
+    public void delete(String id) {
+        newsRepository.deleteById(id);
     }
 
-    private List<NewsDto> convertToDtlList(Iterable<News> list){
+    private List<NewsDto> convertToDtoList(Iterable<News> list) {
         ArrayList<NewsDto> newsList = new ArrayList<>();
-        list.forEach(o-> newsList.add(newsConverter.convertToDto(o)));
+        list.forEach(o -> newsList.add(newsConverter.convertToDto(o)));
         return newsList;
     }
 }

@@ -1,6 +1,5 @@
 package com.zubayr.newsfeed.converter;
 
-import com.zubayr.newsfeed.dto.NewsCategoryDto;
 import com.zubayr.newsfeed.dto.NewsDto;
 import com.zubayr.newsfeed.model.News;
 import com.zubayr.newsfeed.model.NewsCategory;

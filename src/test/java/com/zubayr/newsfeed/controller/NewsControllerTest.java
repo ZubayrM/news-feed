@@ -4,8 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zubayr.newsfeed.dto.NewsDto;
 import com.zubayr.newsfeed.model.News;
 import com.zubayr.newsfeed.model.NewsCategory;
+import com.zubayr.newsfeed.repository.NewsCategoryRepository;
 import com.zubayr.newsfeed.repository.NewsRepository;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +24,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -40,15 +42,44 @@ class NewsControllerTest {
     private ObjectMapper objectMapper;
     @Autowired
     private NewsRepository newsRepository;
+    @Autowired
+    private NewsCategoryRepository newsCategoryRepository;
 
-    static UUID testId = UUID.randomUUID();
+    private static final String testId = UUID.randomUUID().toString();
+    private final News testNews = News.builder()
+            .id(testId)
+            .name("test name")
+            .text("test text")
+            .date(LocalDate.now())
+            .build();
+
+    private final static String testCategoryId = UUID.randomUUID().toString();
+    private final NewsCategory testCategory = NewsCategory.builder()
+            .id(testCategoryId)
+            .name("test category")
+            .build();
+
+    @BeforeEach
+    void setUp() {
+        newsRepository.deleteAll();
+        NewsCategory saveCategory = newsCategoryRepository.save(testCategory);
+        testNews.setNewsCategory(saveCategory);
+        newsRepository.save(testNews);
+    }
+
+    @AfterEach
+    void tearDown() {
+        newsRepository.deleteAll();
+    }
 
     @Test
     @SneakyThrows
     void getAll() {
         mvc.perform(get("/news"))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].name", is(testNews.getName())))
+                .andExpect(jsonPath("$.[0].category", is(testCategory.getName())));
     }
 
     @Test
@@ -56,7 +87,12 @@ class NewsControllerTest {
     void search() {
         mvc.perform(get("/news/search")
                 .param("type", "name")
-                .param("value", "test name"))
+                .param("value", testNews.getName()))
+                .andDo(print())
+                .andExpect(status().isOk());
+        mvc.perform(get("/news/search")
+                .param("type", "category")
+                .param("value", testNews.getNewsCategory().getName()))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -66,31 +102,37 @@ class NewsControllerTest {
     void add() {
 
         NewsDto dto = NewsDto.builder()
-                .name("test name")
-                .text("test text")
+                .id(UUID.randomUUID().toString())
+                .name("new test name")
+                .text("new test text")
                 .date(LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))).
-                category("test category").build();
+                category(testCategory.getName()).build();
 
 
         mvc.perform(post("/news")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is(dto.getName())));
     }
 
     @Test
     @SneakyThrows
     void update() {
-        Optional<News> news = newsRepository.findById(testId);
-        news.ifPresent(o-> {
-            o.setText("new test text");
+        String testTest = "other text";
+        News news1 = newsRepository.findById(testId).orElse(null);
+
+        Optional<News> news = newsRepository.findById(testNews.getId());
+        news.ifPresent(n-> {
+            n.setText(testTest);
             try {
                 mvc.perform(put("/news")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(o)))
+                        .content(objectMapper.writeValueAsString(n)))
                         .andDo(print())
-                        .andExpect(status().isOk());
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.text", is(testTest)));
             } catch (Exception e) {
                 e.printStackTrace();
             }
