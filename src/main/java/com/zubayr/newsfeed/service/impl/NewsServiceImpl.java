@@ -1,11 +1,10 @@
 package com.zubayr.newsfeed.service.impl;
 
-import com.zubayr.newsfeed.converter.NewsCategoryConverter;
 import com.zubayr.newsfeed.converter.NewsConverter;
 import com.zubayr.newsfeed.dto.NewsDto;
+import com.zubayr.newsfeed.model.CategoryNews;
 import com.zubayr.newsfeed.model.News;
-import com.zubayr.newsfeed.model.NewsCategory;
-import com.zubayr.newsfeed.repository.NewsCategoryRepository;
+import com.zubayr.newsfeed.repository.CategoryNewsRepository;
 import com.zubayr.newsfeed.repository.NewsRepository;
 import com.zubayr.newsfeed.service.NewsService;
 import org.mapstruct.factory.Mappers;
@@ -22,16 +21,14 @@ public class NewsServiceImpl implements NewsService {
 
     private final NewsRepository newsRepository;
     private final NewsConverter newsConverter;
-    private final NewsCategoryRepository newsCategoryRepository;
-    private final NewsCategoryConverter newsCategoryConverter;
+    private final CategoryNewsRepository categoryNewsRepository;
 
 
     @Autowired
-    public NewsServiceImpl(NewsRepository newsRepository, NewsCategoryRepository newsCategoryRepository) {
+    public NewsServiceImpl(NewsRepository newsRepository, CategoryNewsRepository categoryNewsRepository) {
         this.newsRepository = newsRepository;
-        this.newsCategoryRepository = newsCategoryRepository;
+        this.categoryNewsRepository = categoryNewsRepository;
         newsConverter = Mappers.getMapper(NewsConverter.class);
-        newsCategoryConverter = Mappers.getMapper(NewsCategoryConverter.class);
     }
 
     @Override
@@ -47,7 +44,7 @@ public class NewsServiceImpl implements NewsService {
 
         switch (type) {
             case "category": {
-                Optional<NewsCategory> category = newsCategoryRepository.findByName(value);
+                Optional<CategoryNews> category = categoryNewsRepository.findByName(value);
                 return category.map(newsCategory -> convertToDtoList(newsCategory.getNews())).orElseGet(ArrayList::new);
             }
             case "name": {
@@ -72,15 +69,15 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public NewsDto add(NewsDto dto) {
         News news = newsConverter.convertToModel(dto);
-        NewsCategory newsCategory = news.getNewsCategory();
+        CategoryNews categoryNews = news.getCategoryNews();
 
-        Optional<NewsCategory> category = newsCategoryRepository.findByName(newsCategory.getName());
+        Optional<CategoryNews> category = categoryNewsRepository.findByName(categoryNews.getName());
 
         if (category.isPresent()) {
-            news.setNewsCategory(category.get());
+            news.setCategoryNews(category.get());
         } else {
-            NewsCategory newSaveCategory = newsCategoryRepository.save(newsCategory);
-            news.setNewsCategory(newSaveCategory);
+            CategoryNews newSaveCategory = categoryNewsRepository.save(categoryNews);
+            news.setCategoryNews(newSaveCategory);
         }
         News newNews = newsRepository.save(news);
 

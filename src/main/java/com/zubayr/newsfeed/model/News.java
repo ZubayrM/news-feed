@@ -32,13 +32,11 @@ public class News {
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     @JsonManagedReference
-    private NewsCategory newsCategory;
+    private CategoryNews categoryNews;
 
     @PrePersist
     public void prePersist(){
-        if(null == getId())
+        if(getId() == null)
             setId(UUID.randomUUID().toString());
     }
-
-
 }

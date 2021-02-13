@@ -9,14 +9,14 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "news_category")
+@Table(name = "category_news")
 @Data
 @ToString
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class NewsCategory {
+public class CategoryNews {
 
     @Id
     private String id;
@@ -25,7 +25,7 @@ public class NewsCategory {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "newsCategory", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "categoryNews", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonBackReference
     private List<News> news = new ArrayList<>();
 

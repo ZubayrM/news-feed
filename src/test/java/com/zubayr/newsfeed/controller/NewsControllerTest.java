@@ -2,9 +2,9 @@ package com.zubayr.newsfeed.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zubayr.newsfeed.dto.NewsDto;
+import com.zubayr.newsfeed.model.CategoryNews;
 import com.zubayr.newsfeed.model.News;
-import com.zubayr.newsfeed.model.NewsCategory;
-import com.zubayr.newsfeed.repository.NewsCategoryRepository;
+import com.zubayr.newsfeed.repository.CategoryNewsRepository;
 import com.zubayr.newsfeed.repository.NewsRepository;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @RunWith(SpringRunner.class)
-@TestPropertySource("/application-test.properties")
+@ActiveProfiles("test")
 class NewsControllerTest {
 
     @Autowired
@@ -43,7 +43,7 @@ class NewsControllerTest {
     @Autowired
     private NewsRepository newsRepository;
     @Autowired
-    private NewsCategoryRepository newsCategoryRepository;
+    private CategoryNewsRepository categoryNewsRepository;
 
     private static final String testId = UUID.randomUUID().toString();
     private final News testNews = News.builder()
@@ -54,7 +54,7 @@ class NewsControllerTest {
             .build();
 
     private final static String testCategoryId = UUID.randomUUID().toString();
-    private final NewsCategory testCategory = NewsCategory.builder()
+    private final CategoryNews testCategory = CategoryNews.builder()
             .id(testCategoryId)
             .name("test category")
             .build();
@@ -62,8 +62,8 @@ class NewsControllerTest {
     @BeforeEach
     void setUp() {
         newsRepository.deleteAll();
-        NewsCategory saveCategory = newsCategoryRepository.save(testCategory);
-        testNews.setNewsCategory(saveCategory);
+        CategoryNews saveCategory = categoryNewsRepository.save(testCategory);
+        testNews.setCategoryNews(saveCategory);
         newsRepository.save(testNews);
     }
 
@@ -92,7 +92,7 @@ class NewsControllerTest {
                 .andExpect(status().isOk());
         mvc.perform(get("/news/search")
                 .param("type", "category")
-                .param("value", testNews.getNewsCategory().getName()))
+                .param("value", testNews.getCategoryNews().getName()))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

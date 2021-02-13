@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NewsCategoryDto {
+public class CategoryNewsDto {
 
     private String name;
 

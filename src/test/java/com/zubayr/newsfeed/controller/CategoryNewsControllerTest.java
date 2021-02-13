@@ -1,9 +1,9 @@
 package com.zubayr.newsfeed.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zubayr.newsfeed.dto.NewsCategoryDto;
-import com.zubayr.newsfeed.model.NewsCategory;
-import com.zubayr.newsfeed.repository.NewsCategoryRepository;
+import com.zubayr.newsfeed.dto.CategoryNewsDto;
+import com.zubayr.newsfeed.model.CategoryNews;
+import com.zubayr.newsfeed.repository.CategoryNewsRepository;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -28,8 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @RunWith(SpringRunner.class)
-@TestPropertySource("/application-test.properties")
-class NewsCategoryControllerTest {
+@ActiveProfiles("test")
+class CategoryNewsControllerTest {
 
 
     @Autowired
@@ -37,41 +37,43 @@ class NewsCategoryControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private NewsCategoryRepository newsCategoryRepository;
+    private CategoryNewsRepository categoryNewsRepository;
+
+    private final String url = "/category_news";
 
     private final static String testId = UUID.randomUUID().toString();
-    private final NewsCategory testNewsCategory = NewsCategory.builder()
+    private final CategoryNews testCategoryNews = CategoryNews.builder()
             .id(testId)
             .name("test category")
             .build();
 
     @BeforeEach
     void setUp() {
-        newsCategoryRepository.deleteAll();
-        newsCategoryRepository.save(testNewsCategory);
+        categoryNewsRepository.deleteAll();
+        categoryNewsRepository.save(testCategoryNews);
     }
 
     @AfterEach
     void tearDown() {
-        newsCategoryRepository.deleteAll();
+        categoryNewsRepository.deleteAll();
     }
 
     @Test
     @SneakyThrows
     void getAll() {
-        mvc.perform(get("/news-category"))
+        mvc.perform(get(url))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0].name", is(testNewsCategory.getName())));
+                .andExpect(jsonPath("$.[0].name", is(testCategoryNews.getName())));
     }
 
     @Test
     @SneakyThrows
     void add() {
-        NewsCategoryDto newTestCategory = NewsCategoryDto.builder()
+        CategoryNewsDto newTestCategory = CategoryNewsDto.builder()
                 .name("new test category").build();
 
-        mvc.perform(post("/news-category")
+        mvc.perform(post(url)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newTestCategory)))
@@ -83,7 +85,7 @@ class NewsCategoryControllerTest {
     @Test
     @SneakyThrows
     void deleteById() {
-        mvc.perform(delete("/news-category/" + testId))
+        mvc.perform(delete(url + "/" + testId))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

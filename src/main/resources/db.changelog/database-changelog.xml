@@ -25,10 +25,10 @@
     <changeSet id="2" author="Zubayr">
         <preConditions onFail="MARK_RAN" onError="CONTINUE">
             <not>
-                <tableExists tableName="news_category"/>
+                <tableExists tableName="category_news"/>
             </not>
         </preConditions>
-        <createTable tableName="news_category">
+        <createTable tableName="category_news">
             <column name="id" type="VARCHAR(256)">
                 <constraints nullable="false" unique="true" primaryKey="true"/>
             </column>

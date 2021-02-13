@@ -1,8 +1,8 @@
 package com.zubayr.newsfeed.converter;
 
 import com.zubayr.newsfeed.dto.NewsDto;
+import com.zubayr.newsfeed.model.CategoryNews;
 import com.zubayr.newsfeed.model.News;
-import com.zubayr.newsfeed.model.NewsCategory;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -13,24 +13,24 @@ public interface NewsConverter {
 
     @Mappings({
             @Mapping( target = "date",  dateFormat = "dd-MM-yyyy"),
-            @Mapping( source = "newsCategory", target = "category", qualifiedByName = "getName")
+            @Mapping( source = "categoryNews", target = "category", qualifiedByName = "getName")
     })
     NewsDto convertToDto(News model);
 
     @Mappings({
             @Mapping(target = "date", dateFormat = "dd-MM-yyyy"),
-            @Mapping(source = "category", target = "newsCategory", qualifiedByName = "getNewsCategory")
+            @Mapping(source = "category", target = "categoryNews", qualifiedByName = "getCategoryNews")
     })
     News convertToModel(NewsDto dto);
 
 
     @Named("getName")
-    static String getName(NewsCategory category){
+    static String getName(CategoryNews category){
         return category.getName();
     }
 
-    @Named("getNewsCategory")
-    static NewsCategory getNewsCategory(String name){
-        return NewsCategory.builder().name(name).build();
+    @Named("getCategoryNews")
+    static CategoryNews getNewsCategory(String name){
+        return CategoryNews.builder().name(name).build();
     }
 }
