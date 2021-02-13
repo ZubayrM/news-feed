@@ -20,7 +20,7 @@ public interface NewsConverter {
 
     @Mappings({
             @Mapping(target = "date", dateFormat = "dd-MM-yyyy"),
-            @Mapping(source = "category", target = "newsCategory", qualifiedByName = "toNewsCategory")
+            @Mapping(source = "category", target = "category", qualifiedByName = "toNewsCategory")
     })
     News convertToModel(NewsDto dto);
 

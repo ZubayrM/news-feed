@@ -1,6 +1,7 @@
 package com.zubayr.newsfeed.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zubayr.newsfeed.dto.NewsDto;
 import com.zubayr.newsfeed.model.News;
 import com.zubayr.newsfeed.model.NewsCategory;
 import com.zubayr.newsfeed.repository.NewsRepository;
@@ -62,21 +63,17 @@ class NewsControllerTest {
     @Test
     @SneakyThrows
     void add() {
-        News news = News.builder()
-                .id(testId)
+
+        NewsDto dto = NewsDto.builder()
                 .name("test name")
                 .text("test text")
-                .date(LocalDate.now())
-                .newsCategory(NewsCategory.builder()
-                        .id(UUID.randomUUID())
-                        .name("test category")
-                        .build())
-                .build();
+                .date(LocalDate.now().toString()).
+                category("test category").build();
 
 
         mvc.perform(post("/news")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(news)))
+                .content(objectMapper.writeValueAsString(dto)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

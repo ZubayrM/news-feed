@@ -82,7 +82,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public ResponseEntity add(NewsDto dto) {
-        newsCategoryRepository.save(newsCategoryConverter.convertToModel(dto.getCategory()));
+        newsCategoryRepository.save(newsConverter.convertToModel(dto).getNewsCategory());
         News save = newsRepository.save(newsConverter.convertToModel(dto));
         return ResponseEntity.ok(newsConverter.convertToDto(save));
     }

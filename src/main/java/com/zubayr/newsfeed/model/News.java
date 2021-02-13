@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -18,7 +19,8 @@ import java.util.UUID;
 public class News {
 
     @Id
-    @GeneratedValue(generator = "uuid")
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(name = "id")
     private UUID id;
 
@@ -32,7 +34,7 @@ public class News {
     private LocalDate date;
 
     @ManyToOne
-    @JoinColumn(name = "newsCategory_id")
+    @JoinColumn(name = "category_id", nullable = false)
     private NewsCategory newsCategory;
 
 }

@@ -21,6 +21,6 @@ public class NewsDto {
 
     private String date;
 
-    private NewsCategoryDto category;
+    private String category;
 
 }

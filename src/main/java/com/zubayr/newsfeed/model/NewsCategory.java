@@ -20,8 +20,8 @@ import java.util.UUID;
 public class NewsCategory {
 
     @Id
-    @GeneratedValue(generator = "uuid4")
-    @GenericGenerator(name = "uuid4", strategy = "uuid4")
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(name = "id")
     private UUID id;
 
