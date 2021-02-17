@@ -16,7 +16,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.StopWatch;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
@@ -39,6 +41,8 @@ class CategoryNewsControllerTest {
     @Autowired
     private CategoryNewsRepository categoryNewsRepository;
 
+    StopWatch stopWatch;
+
     private final String url = "/category_news";
 
     private final static String testId = UUID.randomUUID().toString();
@@ -51,11 +55,27 @@ class CategoryNewsControllerTest {
     void setUp() {
         categoryNewsRepository.deleteAll();
         categoryNewsRepository.save(testCategoryNews);
+        stopWatch = new StopWatch();
     }
 
     @AfterEach
     void tearDown() {
         categoryNewsRepository.deleteAll();
+    }
+
+    @Test
+    @SneakyThrows
+    void getById() {
+        for (int i = 0; i < 5; i++) {
+            stopWatch.start("request getAll-" + i );
+            mvc.perform(get(url + "/" + testCategoryNews.getId()))
+                    .andDo(print())
+                    .andExpect(jsonPath("$.name", is(testCategoryNews.getName())));
+            stopWatch.stop();
+        }
+        Arrays.stream(stopWatch.getTaskInfo()).forEach(o-> {
+            System.out.println(o.getTaskName() + " = " + o.getTimeMillis());
+        });
     }
 
     @Test
@@ -89,4 +109,6 @@ class CategoryNewsControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
+
 }

@@ -17,6 +17,11 @@ public class CategoryNewsController {
         this.categoryNewsService = categoryNewsService;
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<CategoryNewsDto> getById(@PathVariable("id") String UUID){
+        return ResponseEntity.ok(categoryNewsService.getById(UUID));
+    }
+
     @GetMapping
     public ResponseEntity<List<CategoryNewsDto>> getAll(){
         return ResponseEntity.ok(categoryNewsService.getAll());
